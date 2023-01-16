@@ -61,7 +61,7 @@ exports.getUsersLeetcodeProfile = async (req, res) => {
 
 exports.getUsersLeetcodeProfileGuide = (req, res) => {
   res.status(200);
-  res.send("Welcome to Leetfriends. Kindly pass a leetcode username as parameter. eg:- /api/get-users-leetcode-profile/USERNAME");
+  res.send("Welcome to Leetfriends ==> eg:- /api/get-users-leetcode-profile/USERNAME");
 };
 
 // userContestRankingHistory(username: $username) {
