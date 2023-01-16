@@ -28,22 +28,8 @@ db.once("open", function () {
 app.get('/', routes.index);
 
 // API Routes
-// app.post('/api/register', routes.registerUser);
-// app.post('/api/login', routes.loginUser);
-// app.post('/api/refresh-token', routes.refreshToken);
-// app.post('/api/create-clan', routes.createClan);
-// app.post('/api/view-clan', routes.viewClan);
-// app.post('/api/join-clan', routes.joinClan);
-// app.post('/api/leave-clan', routes.leaveClan);
-// app.post('/api/delete-clan', routes.deleteClan);
-
-// app.get('/api/contest-ratings', routes.contestRatings);
-// app.get('/api/user-details/:username', routes.userDetails);
-// app.post('/api/add-user', routes.addUser);
-// // app.post('/api/clash-of-leetcoders/update-user', routes.updateUser);
-// // app.post('/api/clash-of-leetcoders/delete-user', routes.deleteUser);
-// app.get('/api/get-all-clans/', routes.getAllClans);
-
+app.get('/api/get-users-leetcode-profile', routes.getUsersLeetcodeProfileGuide);
+app.get('/api/get-users-leetcode-profile/:username', routes.getUsersLeetcodeProfile);
 
 
 app.listen(port, function() {
