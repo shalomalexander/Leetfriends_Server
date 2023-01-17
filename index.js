@@ -30,6 +30,8 @@ app.get('/', routes.index);
 // API Routes
 app.get('/api/get-users-leetcode-profile', routes.getUsersLeetcodeProfileGuide);
 app.get('/api/get-users-leetcode-profile/:username', routes.getUsersLeetcodeProfile);
+app.post('/api/create-user', routes.createUser);
+app.post('/api/add-member', routes.addMember);
 
 
 app.listen(port, function() {
