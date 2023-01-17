@@ -1,4 +1,6 @@
 const axios = require("axios");
+const { User } = require("../Models/models");
+const { fetchUserDetail } = require("./utility");
 
 exports.index = (req, res) => {
   res.status(200);
@@ -61,7 +63,51 @@ exports.getUsersLeetcodeProfile = async (req, res) => {
 
 exports.getUsersLeetcodeProfileGuide = (req, res) => {
   res.status(200);
-  res.send("Welcome to Leetfriends ==> eg:- /api/get-users-leetcode-profile/USERNAME");
+  res.send(
+    "Welcome to Leetfriends ==> eg:- /api/get-users-leetcode-profile/USERNAME"
+  );
+};
+
+exports.createUser = async (req, res) => {
+  const { leetcodeUsername } = req.body;
+  try {
+    const response = await User.create({ leetcodeUsername: leetcodeUsername });
+    res.send({ status: "SUCCESS", message: "User created" });
+  } catch (err) {
+    res.send({ status: "FAIL", message: "User could not be created" });
+  }
+};
+
+exports.addMember = async (req, res) => {
+  const { leetcodeUsername, member } = req.body;
+
+  // Check to see if the member leetcode account is valid
+  const memberObject = await fetchUserDetail({ username: member });
+  if (memberObject.data.matchedUser) {
+    // Check if member already exists in the array
+    const UserModel = await User.findOne({
+      leetcodeUsername: leetcodeUsername,
+    });
+    if (UserModel.members.includes(member))
+      res.send({ status: "FAIL", message: "Member already exists" });
+
+    try {
+      await User.updateOne(
+        { leetcodeUsername: leetcodeUsername },
+        {
+          $push: { members: member },
+        }
+      );
+      res.send(res.send({ status: "SUCCESS", message: "Member added" }));
+    } catch (err) {
+      res.send({ status: "FAIL", message: "Member could not be added" });
+    }
+  } else {
+    res.send({
+      status: "FAIL",
+      message: "The leetcode username doesn't not exist",
+    });
+  }
 };
 
 // userContestRankingHistory(username: $username) {
