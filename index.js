@@ -32,6 +32,7 @@ app.get('/api/get-users-leetcode-profile', routes.getUsersLeetcodeProfileGuide);
 app.get('/api/get-users-leetcode-profile/:username', routes.getUsersLeetcodeProfile);
 app.post('/api/create-user', routes.createUser);
 app.post('/api/add-member', routes.addMember);
+app.post('/api/delete-member', routes.deleteMember)
 
 
 app.listen(port, function() {

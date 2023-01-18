@@ -64,7 +64,7 @@ exports.getUsersLeetcodeProfile = async (req, res) => {
 exports.getUsersLeetcodeProfileGuide = (req, res) => {
   res.status(200);
   res.send(
-    "Welcome to Leetfriends ==> eg:- /api/get-users-leetcode-profile/USERNAME"
+    "Welcome to Leetfriends => eg:- /api/get-users-leetcode-profile/USERNAME"
   );
 };
 
@@ -106,6 +106,29 @@ exports.addMember = async (req, res) => {
     res.send({
       status: "FAIL",
       message: "The leetcode username doesn't not exist",
+    });
+  }
+};
+
+exports.deleteMember = async (req, res) => {
+  const { leetcodeUsername, member } = req.body;
+
+  try {
+    const response = await User.updateOne(
+      { leetcodeUsername: leetcodeUsername },
+      { $pull: { members: member } }
+    );
+
+    res.send({
+      status: "SUCCESS",
+      message: "The leetcode username removed",
+      response: response,
+    });
+
+  } catch (err) {
+    res.send({
+      status: "FAIL",
+      message: "The leetcode username could not be removed",
     });
   }
 };
