@@ -79,33 +79,44 @@ exports.createUser = async (req, res) => {
 };
 
 exports.addMember = async (req, res) => {
-  const { leetcodeUsername, member } = req.body;
+  const leetcodeUsername = req.body.leetcodeUsername;
+  const member = req.body.member.toUpperCase();
 
   // Check to see if the member leetcode account is valid
-  const memberObject = await fetchUserDetail({ username: member });
-  if (memberObject.data.matchedUser) {
-    // Check if member already exists in the array
-    const UserModel = await User.findOne({
-      leetcodeUsername: leetcodeUsername,
-    });
-    if (UserModel.members.includes(member))
-      res.send({ status: "FAIL", message: "Member already exists" });
+  try {
+    const memberObject = await fetchUserDetail({ username: member });
+    if (memberObject.data.matchedUser) {
+      // Check if member already exists in the array
+      const UserModel = await User.findOne({
+        leetcodeUsername: leetcodeUsername,
+      });
 
-    try {
-      await User.updateOne(
-        { leetcodeUsername: leetcodeUsername },
-        {
-          $push: { members: member },
-        }
-      );
-      res.send(res.send({ status: "SUCCESS", message: "Member added" }));
-    } catch (err) {
-      res.send({ status: "FAIL", message: "Member could not be added" });
+      if (UserModel.members.includes(member)) {
+        res.send({ status: "FAIL", message: "Member already exists" });
+        return;
+      }
+
+      try {
+        await User.updateOne(
+          { leetcodeUsername: leetcodeUsername },
+          {
+            $push: { members: member },
+          }
+        );
+        res.send(res.send({ status: "SUCCESS", message: "Member added" }));
+      } catch (err) {
+        res.send({ status: "FAIL", message: "Member could not be added" });
+      }
+    } else {
+      res.send({
+        status: "FAIL",
+        message: "The leetcode username doesn't not exist",
+      });
     }
-  } else {
+  } catch (err) {
     res.send({
       status: "FAIL",
-      message: "The leetcode username doesn't not exist",
+      message: "There was some error",
     });
   }
 };
@@ -124,13 +135,16 @@ exports.deleteMember = async (req, res) => {
       message: "The leetcode username removed",
       response: response,
     });
-
   } catch (err) {
     res.send({
       status: "FAIL",
       message: "The leetcode username could not be removed",
     });
   }
+};
+
+exports.getMembers = async (req, res) => {
+  const { leetcodeUsername } = req.body;
 };
 
 // userContestRankingHistory(username: $username) {
