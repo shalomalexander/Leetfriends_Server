@@ -1,6 +1,9 @@
 const axios = require("axios");
 const { User } = require("../Models/models");
-const { fetchUserDetail } = require("./utility");
+const {
+  fetchUserDetail,
+  getUsersLeetcodeProfileUtility,
+} = require("./utility");
 
 exports.index = (req, res) => {
   res.status(200);
@@ -143,8 +146,30 @@ exports.deleteMember = async (req, res) => {
   }
 };
 
-exports.getMembers = async (req, res) => {
-  const { leetcodeUsername } = req.body;
+exports.getAllMembersLeetcodeProfile = async (req, res) => {
+  const membersList = req.body;
+
+  const membersLeetcodeProfilePromise = membersList.map((ele) =>
+    getUsersLeetcodeProfileUtility({ username: ele.member })
+  );
+
+  const membersLeetcodeProfile = await Promise.all(
+    membersLeetcodeProfilePromise
+  );
+
+  // Remove the user who are not matched
+  let filteredMembersLeetcodeProfile = membersLeetcodeProfile.filter(
+    (ele) => ele?.data?.matchedUser !== null
+  );
+
+  filteredMembersLeetcodeProfile = filteredMembersLeetcodeProfile.map((ele) => {
+    if (ele?.data.userContestRanking === null) {
+      return { data: { ...ele.data, userContestRanking: { rating: 0 } } };
+    }
+    return ele;
+  });
+
+  res.send({ status: "SUCCESS", response: filteredMembersLeetcodeProfile });
 };
 
 // userContestRankingHistory(username: $username) {
