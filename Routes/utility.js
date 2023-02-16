@@ -112,3 +112,55 @@ exports.fetchLeetcodeInfoOfUser = async (req, res) => {
       console.log(error);
     });
 };
+
+exports.getUsersLeetcodeProfileUtility = async (req, res) => {
+  let username = req.username;
+  const endpoint = "https://leetcode.com/graphql/";
+
+  const graphqlQuery = {
+    query: `
+      query userPublicProfile($username: String!) {
+        matchedUser(username: $username) {
+            username
+            profile {
+                ranking
+                realName
+                aboutMe
+                countryName
+                reputation
+            }
+            problemsSolvedBeatsStats {      
+                difficulty      
+                percentage    
+            }    
+            submitStatsGlobal {      
+                acSubmissionNum {        
+                    difficulty        
+                    count      
+                }    
+            }  
+        }
+        allQuestionsCount {    
+            difficulty    
+            count  
+        }
+        userContestRanking(username: $username) { 
+            attendedContestsCount
+            rating
+            globalRanking
+            totalParticipants
+            topPercentage
+        }
+      }`,
+    variables: {
+      username: `${username}`,
+    },
+  };
+
+  return axios
+    .post(endpoint, graphqlQuery)
+    .then((response) => response.data)
+    .catch((error) => {
+      console.log(error);
+    });
+};
